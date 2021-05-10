@@ -42,3 +42,6 @@ font-size: 25px;
 cursor: pointer;
 float: right;
 }
+.dis-flr{
+  display: flow-root;
+}

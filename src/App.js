@@ -15,6 +15,7 @@ export default class App extends Component {
   constructor() {
     super();
     this.state = {
+      isActive: true,
       modal : false,
       dayOfWeek: "",
       calendar: Schedule,
@@ -23,7 +24,8 @@ export default class App extends Component {
       };
     this.handleChange = this.handleChange.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-    this.clearArray = this.clearArray.bind(this)
+    this.clearArray = this.clearArray.bind(this);
+    this.darkTheme = this.darkTheme.bind(this);
     }
   
   handleChange() {
@@ -34,6 +36,25 @@ export default class App extends Component {
     });
     //  console.log(this.state.calendar)
   }
+  darkTheme() {
+    this.setState(prevState=>{
+      if(prevState.isActive === true) {
+        document.querySelector('body').style.background = 'black';
+        document.querySelector('body').style.color = 'green';
+        // document.querySelector('.dark_theme').className = 'text-black';
+    }
+    else{
+      document.querySelector('body').style.background = 'white'
+      document.querySelector('body').style.color = 'black'
+      // document.querySelector('.text-dark').className = 'text-black';
+      
+    }
+    return{
+      isActive: !prevState.isActive
+    }
+    })
+    
+}
   toggleCollapse = (collapseID) => () => {
     this.setState((prevState) => ({
       collapseID: prevState.collapseID !== collapseID ? collapseID : "",
@@ -51,8 +72,31 @@ export default class App extends Component {
     })
   };
   addEvent =()=>{
-    // let dayOfWeek
-    var newArray = [...this.state.calendar.Monday];
+    let dayOfWeek
+    switch (this.state.collapseID) {
+      case "MondaySchedule":
+        dayOfWeek = this.state.calendar.Monday
+        break;
+      case"TuesdaySchedule":
+      dayOfWeek = this.state.calendar.Tuesday
+      break;
+      case"WednesdaySchedule":
+      dayOfWeek = this.state.calendar.Wednesday
+      break;
+      case"ThursdaySchedule":
+      dayOfWeek = this.state.calendar.Thursday
+      break;
+      case"FridaySchedule":
+      dayOfWeek = this.state.calendar.Friday
+      break;
+      case"SaturdaySchedule":
+      dayOfWeek = this.state.calendar.Saturday
+      break;
+      case"SundaySchedule":
+      dayOfWeek = this.state.calendar.Sunday
+      break;
+    }
+    var newArray = [...dayOfWeek];
     newArray.push({
       id: newArray.length? newArray[newArray.length - 1].id + 1 : 1,
       time: this.state.time,
@@ -65,10 +109,20 @@ export default class App extends Component {
         case "MondaySchedule":
           this.state.calendar.Monday = newArray
           break;
-      
-        default: 
-        this.state.calendar.Monday = newArray
-          break;
+        case"TuesdaySchedule":
+        this.state.calendar.Tuesday = newArray
+        break;
+        case"WednesdaySchedule":
+        this.state.calendar.Wednesday = newArray
+        break;case"ThursdaySchedule":
+        this.state.calendar.Thursday = newArray
+        break;case"FridaySchedule":
+        this.state.calendar.Friday = newArray
+        break;case"SaturdaySchedule":
+        this.state.calendar.Saturday = newArray
+        break;case"SundaySchedule":
+        this.state.calendar.Sunday = newArray
+        break;
       }
       return{}
     })
@@ -191,6 +245,7 @@ export default class App extends Component {
      })
   }
   render() {
+    let buttonText = this.state.isActive? "Dark Theme" : "Light Theme"
     let eventsNumber;
     switch (this.state.collapseID) {
       case "MondaySchedule":
@@ -250,16 +305,20 @@ export default class App extends Component {
         <MDBContainer>
           <MDBRow>
             <MDBCol lg="9">
-              <h5 className="text-right">
-                <Switch
-                  checked={this.state.checkedA}
-                  onChange={this.handleChange}
-                  color="primary"
-                  inputProps={{ "aria-label": "primary checkbox" }}
-                />
-                Dark Theme
-              </h5>
-              <div className="schedule-items">
+            <div className='dis-flr'>
+              <ButtonGroup className="float-right">
+                <Button
+                  onClick={this.darkTheme}
+                  className="mr-3"
+                  variant={this.state.isActive?"dark": "light"}
+                  style ={this.state.isActive? {color: "white" }: {color: "green"}}
+                >
+                  {buttonText}
+                </Button>
+              </ButtonGroup>
+              
+              </div>
+        <div className="schedule-items">
                 <div>
                   <h2
                     onClick={this.toggleCollapse("MondaySchedule")}
@@ -623,11 +682,11 @@ export default class App extends Component {
           <MDBModalFooter className="justify-content-center">
             <ButtonGroup>
               <Button
-                onClick={()=>{
+                onClick={() => {
                   this.toggleModal();
-                  this.addEvent();}}
+                  this.addEvent();
+                }}
                 variant="info"
-
               >
                 Add
               </Button>
@@ -660,7 +719,7 @@ class Event extends Component{
       </div>
       </div>
       {this.props.list.description &&
-       <p className="p-2 mb-4 blue-grey lighten-5 blue-grey lighten-5">Description: {this.props.list.description}</p>}
+       <p className="dark_theme p-2 mb-4 blue-grey lighten-5 blue-grey lighten-5">Description: {this.props.list.description}</p>}
      
       
       </React.Fragment>
